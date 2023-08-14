@@ -87,7 +87,7 @@ def note_del(args):
     params = args.strip().split()
     if len(params) == 1:
         return note_book.del_note(params[0])
-    else: return "Wrong arguments amount. Expected 1 argument"
+    else: raise ArgsAmountException("Wrong arguments amount. Expected 1 argument")
 
 #=========================================================
 # >> note-change <key> <Text>
@@ -182,6 +182,7 @@ def func_new_user(*args):
             new_birthday = Birthday(args[1])
             if new_birthday.value == None:
                 args = args[1:]
+                new_birthday = None
             else:
                 args = args[2:]
      
