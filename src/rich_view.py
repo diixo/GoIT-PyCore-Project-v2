@@ -1,6 +1,6 @@
 
 from view import AbstractView
-from contact_book import AddressBook, Record, Name, Phone, Email, Birthday, Address, PhoneException, BirthdayException, EmailException
+from contact_book import AddressBook, Record, Name, Phone, Email, Birthday, Address
 from note_book import NoteBook
 
 from rich import print
@@ -13,14 +13,24 @@ class Rich_View(AbstractView):
 
    # вывод в консоль ноут-буки
    def show_note_book(self, note_book: NoteBook):
-      for note in note_book.data.values():
-         print(f"[{(len(note.tags))}] {note.key}: " + note.value)
-      for tag in note_book.tags.values():
-         print("[" + str(tag.sz()) + "]#" + tag.value)
+      if len(note_book.data) == 0: 
+         print("The database is empty")
+      else:
+         table = Table(box=box.DOUBLE)
+         table.add_column("ID", justify="left", no_wrap=True)
+         table.add_column("Note", justify="center", style="cyan", no_wrap=True)
+         table.add_column("Tags", justify="center", style="blue", no_wrap=True)
+         console = Console()
+         result = [table.add_row(
+               note.key,
+               str(note.value), 
+               str("---") if len(note.tags) == 0 else " ".join(["#" + tag for tag in note.tags])
+            ) for note in note_book.data.values()]
+         console.print(table)
 
    # вывод в консоль контакт-буки
    def show_contact_book(self, contact_book: AddressBook):
-      if len(contact_book.data) == 0: 
+      if len(contact_book.data) == 0:
          print("The database is empty")
       else: 
          table = Table(box=box.DOUBLE)
@@ -32,12 +42,12 @@ class Rich_View(AbstractView):
          
          console = Console()
          result = [table.add_row(
-               str(record.name.value), 
-               str(record.birthday.value if record.birthday else "---"), 
-               str(', '.join(map(lambda phone: phone.value, record.phones))), 
-               str(record.email.value    if record.email    else "---"), 
+               str(record.name.value),
+               str(record.birthday.value if record.birthday else "---"),
+               str(', '.join(map(lambda phone: phone.value, record.phones))),
+               str(record.email.value    if record.email    else "---"),
                str(record.address.value  if record.address  else "---")
-                  ) for record in contact_book.data.values()]        
+                  ) for record in contact_book.data.values()]
          console.print(table)
 
    # вывод в консоль хэлпа
@@ -47,6 +57,7 @@ class Rich_View(AbstractView):
 [bold red]exit[/bold red] - завершення програми
 [bold red]showall[/bold red] - друкування всієї наявної інформації про користувачів
 [bold red]userbook N[/bold red] - друкування інформації посторінково, де [bold red]N[/bold red] - кількість записів на 1 сторінку
+      example >> [bold blue]userbook 10[/bold blue]
 [bold red]user+[/bold red] - додавання нової особи до бази даних
       example >> [bold blue]user+ Mike 01.01.1990 380123456789 112233445566[/bold blue]
       example >> [bold blue]user+ Mike 112233445566 380123456789[/bold blue]
@@ -54,7 +65,7 @@ class Rich_View(AbstractView):
       example >> [bold blue]user- Mike[/bold blue]
 [bold red]rename[/bold red] - перейменування запису вказаної особи 
       example >> [bold blue]rename OldName NewName[/bold blue]
-[bold red]showuser[/bold red] - виводить повну інформацію про особу
+[bold red]showuser[/bold red] - виводить повну інформацію про вказану особу
       example >> [bold blue]showuser Mike[/bold blue]
 [bold red]phone+[/bold red] - додавання нового номеру телефона для вказаної особи
       example >> [bold blue]phone+ Mike 380123456789[/bold blue]
@@ -81,7 +92,7 @@ class Rich_View(AbstractView):
       example >> [bold blue]note* 1 My first note text[/bold blue]
 [bold red]note?[/bold red] - здійснює пошук нотаток за текстом
       example >> [bold blue]note? text_in_note[/bold blue]
-[bold red]note#[/bold red] - здійснює пошук та сортування нотаток з текстом у ключових словах (використовує пейджинацію)
+[bold red]note#[/bold red] - здійснює пошук та сортування нотаток з текстом у ключових словах (використовується пейджинація)
       example >> [bold blue]note# text_in_tag[/bold blue]
 [bold red]tag+[/bold red] - додає нові теги до нотатки за вказаним ID нотатки
       example >> [bold blue]tag+ 1 tag0 tag1 tag2[/bold blue]

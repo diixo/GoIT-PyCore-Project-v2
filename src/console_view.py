@@ -1,6 +1,6 @@
 
 from view import AbstractView
-from contact_book import AddressBook, Record, Name, Phone, Email, Birthday, Address, PhoneException, BirthdayException, EmailException
+from contact_book import AddressBook, Record, Name, Phone, Email, Birthday, Address
 from note_book import NoteBook
 
 
@@ -8,14 +8,17 @@ class Console_View(AbstractView):
 
    # вывод в консоль ноут-буки
    def show_note_book(self, note_book: NoteBook):
-      for note in note_book.data.values():
-         print(f"[{(len(note.tags))}] {note.key}: " + note.value)
-      for tag in note_book.tags.values():
-         print("[" + str(tag.sz()) + "]#" + tag.value)
+      if len(note_book.data) == 0:
+         print("The database is empty")
+      else:
+         for note in note_book.data.values():
+            print(f"[{(len(note.tags))}] {note.key}: " + note.value)
+         for tag in note_book.tags.values():
+            print("[" + str(tag.sz()) + "]#" + tag.value)
 
    # вывод в консоль контакт-буки
    def show_contact_book(self, contact_book: AddressBook):
-      if len(contact_book.data) == 0: 
+      if len(contact_book.data) == 0:
          print("The database is empty")
       else:
          for rec in contact_book.values(): print(rec)
@@ -27,6 +30,7 @@ hello - вітання
 exit - завершення програми
 showall - друкування всієї наявної інформації про користувачів
 userbook N - друкування інформації посторінково, де N - кількість записів на 1 сторінку
+      example >> userbook 10
 user+ - додавання нової особи до бази даних. 
       example >> user+ Mike 01.01.1990 380123456789 112233445566
       example >> user+ Mike 112233445566 380123456789
@@ -34,7 +38,7 @@ user- - видалення запису вказаної особи
       example >> user- Mike
 rename - перейменування запису вказаної особи 
       example >> rename OldName NewName
-showuser - виводить повну інформацію про особу
+showuser - виводить повну інформацію про вказану особу
       example >> showuser Mike
 phone+ - додавання нового номеру телефона для вказаної особи
       example >> phone+ Mike 380123456789
@@ -61,7 +65,7 @@ note* - змінює текст нотатки за вказаним ID нота
       example >> note* 1 My first note text
 note? - здійснює пошук нотаток за текстом
       example >> note? text_in_note
-note# - здійснює пошук та сортування нотаток з текстом у ключових словах (використовує пейджинацію)
+note# - здійснює пошук та сортування нотаток з текстом у ключових словах (використовується пейджинація)
       example >> note# text_in_tag
 tag+ - додає нові теги до нотатки за вказаним ID нотатки
       example >> tag+ 1 tag0 tag1 tag2
